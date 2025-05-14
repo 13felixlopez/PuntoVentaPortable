@@ -85,7 +85,7 @@
             this.label12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(63)))), ((int)(((byte)(84)))));
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label12.ForeColor = System.Drawing.Color.White;
-            this.label12.Location = new System.Drawing.Point(241, 17);
+            this.label12.Location = new System.Drawing.Point(165, 9);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(196, 31);
             this.label12.TabIndex = 37;
@@ -320,7 +320,7 @@
             // btnbuscarproducto
             // 
             this.btnbuscarproducto.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnbuscarproducto.IconChar = FontAwesome.Sharp.IconChar.Search;
+            this.btnbuscarproducto.IconChar = FontAwesome.Sharp.IconChar.MagnifyingGlass;
             this.btnbuscarproducto.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(63)))), ((int)(((byte)(84)))));
             this.btnbuscarproducto.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnbuscarproducto.IconSize = 20;
@@ -337,7 +337,7 @@
             // btnbuscarproveedor
             // 
             this.btnbuscarproveedor.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnbuscarproveedor.IconChar = FontAwesome.Sharp.IconChar.Search;
+            this.btnbuscarproveedor.IconChar = FontAwesome.Sharp.IconChar.MagnifyingGlass;
             this.btnbuscarproveedor.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(63)))), ((int)(((byte)(84)))));
             this.btnbuscarproveedor.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnbuscarproveedor.IconSize = 20;
@@ -527,7 +527,7 @@
             // btnCancelarCompra
             // 
             this.btnCancelarCompra.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCancelarCompra.IconChar = FontAwesome.Sharp.IconChar.Times;
+            this.btnCancelarCompra.IconChar = FontAwesome.Sharp.IconChar.Remove;
             this.btnCancelarCompra.IconColor = System.Drawing.Color.Red;
             this.btnCancelarCompra.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnCancelarCompra.IconSize = 20;

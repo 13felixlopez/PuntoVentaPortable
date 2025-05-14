@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Inicio));
-            this.label1 = new System.Windows.Forms.Label();
+            this.LblNombre = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblstatus1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -54,19 +54,19 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // LblNombre
             // 
-            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(63)))), ((int)(((byte)(84)))));
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
-            this.label1.Size = new System.Drawing.Size(665, 91);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "FERRETERIA";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.LblNombre.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(63)))), ((int)(((byte)(84)))));
+            this.LblNombre.Dock = System.Windows.Forms.DockStyle.Top;
+            this.LblNombre.Font = new System.Drawing.Font("Microsoft Sans Serif", 25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LblNombre.ForeColor = System.Drawing.Color.White;
+            this.LblNombre.Location = new System.Drawing.Point(0, 0);
+            this.LblNombre.Name = "LblNombre";
+            this.LblNombre.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
+            this.LblNombre.Size = new System.Drawing.Size(665, 91);
+            this.LblNombre.TabIndex = 4;
+            this.LblNombre.Text = "FERRETERIA";
+            this.LblNombre.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // statusStrip1
             // 
@@ -142,7 +142,7 @@
             this.btnsalir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnsalir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnsalir.ForeColor = System.Drawing.Color.White;
-            this.btnsalir.IconChar = FontAwesome.Sharp.IconChar.SignOutAlt;
+            this.btnsalir.IconChar = FontAwesome.Sharp.IconChar.RightFromBracket;
             this.btnsalir.IconColor = System.Drawing.Color.White;
             this.btnsalir.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnsalir.IconSize = 50;
@@ -161,7 +161,7 @@
             this.menuMantenimiento.Cursor = System.Windows.Forms.Cursors.Hand;
             this.menuMantenimiento.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.menuMantenimiento.ForeColor = System.Drawing.Color.White;
-            this.menuMantenimiento.IconChar = FontAwesome.Sharp.IconChar.Tools;
+            this.menuMantenimiento.IconChar = FontAwesome.Sharp.IconChar.ScrewdriverWrench;
             this.menuMantenimiento.IconColor = System.Drawing.Color.White;
             this.menuMantenimiento.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.menuMantenimiento.IconSize = 80;
@@ -180,7 +180,7 @@
             this.menuProveedores.Cursor = System.Windows.Forms.Cursors.Hand;
             this.menuProveedores.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.menuProveedores.ForeColor = System.Drawing.Color.White;
-            this.menuProveedores.IconChar = FontAwesome.Sharp.IconChar.ShippingFast;
+            this.menuProveedores.IconChar = FontAwesome.Sharp.IconChar.TruckFast;
             this.menuProveedores.IconColor = System.Drawing.Color.White;
             this.menuProveedores.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.menuProveedores.IconSize = 80;
@@ -199,7 +199,7 @@
             this.menuProductos.Cursor = System.Windows.Forms.Cursors.Hand;
             this.menuProductos.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.menuProductos.ForeColor = System.Drawing.Color.White;
-            this.menuProductos.IconChar = FontAwesome.Sharp.IconChar.Boxes;
+            this.menuProductos.IconChar = FontAwesome.Sharp.IconChar.BoxesStacked;
             this.menuProductos.IconColor = System.Drawing.Color.White;
             this.menuProductos.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.menuProductos.IconSize = 80;
@@ -237,7 +237,7 @@
             this.menuCompras.Cursor = System.Windows.Forms.Cursors.Hand;
             this.menuCompras.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.menuCompras.ForeColor = System.Drawing.Color.White;
-            this.menuCompras.IconChar = FontAwesome.Sharp.IconChar.ShoppingCart;
+            this.menuCompras.IconChar = FontAwesome.Sharp.IconChar.CartShopping;
             this.menuCompras.IconColor = System.Drawing.Color.White;
             this.menuCompras.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.menuCompras.IconSize = 80;
@@ -337,7 +337,7 @@
             this.Controls.Add(this.menuClientes);
             this.Controls.Add(this.menuCompras);
             this.Controls.Add(this.menuVentas);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.LblNombre);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.pictureBox3);
@@ -362,7 +362,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label LblNombre;
         private FontAwesome.Sharp.IconButton menuVentas;
         private FontAwesome.Sharp.IconButton menuCompras;
         private FontAwesome.Sharp.IconButton menuClientes;

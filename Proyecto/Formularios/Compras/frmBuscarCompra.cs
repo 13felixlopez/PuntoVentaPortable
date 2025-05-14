@@ -1,6 +1,7 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.tool.xml;
+using Proyecto.Herramientas;
 using Proyecto.Modelo;
 using ProyectoVenta.Logica;
 using System;
@@ -31,6 +32,9 @@ namespace Proyecto.Formularios.Compras
         private void frmBuscarCompra_Load(object sender, EventArgs e)
         {
             txtbusqueda.Select();
+            DetalleNegocio dn = new DetalleNegocio();
+            dn.Logo(iconPictureBox1, label2);
+            label2.Text = "Buscar Compra " + label2.Text;
         }
 
         private void btnbuscar_Click(object sender, EventArgs e)

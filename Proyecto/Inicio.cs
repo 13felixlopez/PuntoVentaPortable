@@ -1,11 +1,15 @@
-﻿using Proyecto.Formularios.Clientes;
+﻿using iTextSharp.text.pdf;
+using Proyecto.Formularios.Clientes;
 using Proyecto.Formularios.Proveedores;
+using Proyecto.Herramientas;
 using Proyecto.Intermedios;
+using ProyectoVenta.Logica;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,7 +64,10 @@ namespace Proyecto
                 menuMantenimiento.Enabled = false;
                 menuMantenimiento.Cursor = Cursors.No;
             }
+            DetalleNegocio dn = new DetalleNegocio();
+            dn.Logo(iconPictureBox1, LblNombre);
         }
+
         private void Frm_Closing(object sender, FormClosingEventArgs e)
         {
             this.Show();

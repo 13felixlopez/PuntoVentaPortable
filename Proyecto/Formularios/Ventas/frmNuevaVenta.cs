@@ -1,4 +1,5 @@
 ﻿using Proyecto.Formularios.Modales;
+using Proyecto.Herramientas;
 using Proyecto.Modelo;
 using ProyectoVenta.Logica;
 using System;
@@ -34,6 +35,9 @@ namespace Proyecto.Formularios.Ventas
             txtdoccliente.Focus();
             txtfecharegistro.Text = DateTime.Now.ToString("dd/MM/yyyy");
             txttotalpagar.Text = "0.00";
+            DetalleNegocio dn = new DetalleNegocio();
+            dn.Logo(iconPictureBox1, label12);
+            label12.Text = "Nueva Venta " + label12.Text;
         }
 
         private void btnbuscarcliente_Click(object sender, EventArgs e)

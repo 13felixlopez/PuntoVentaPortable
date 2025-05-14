@@ -1,10 +1,12 @@
-﻿using Proyecto.Modelo;
+﻿using Proyecto.Herramientas;
+using Proyecto.Modelo;
 using ProyectoVenta.Logica;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -106,6 +108,12 @@ namespace Proyecto
 
                 }
             }
+        }
+
+        private void frmLogin_Load(object sender, EventArgs e)
+        {
+            DetalleNegocio dn = new DetalleNegocio();
+            dn.Logo(iconPictureBox1, LblNombre);
         }
     }
 }

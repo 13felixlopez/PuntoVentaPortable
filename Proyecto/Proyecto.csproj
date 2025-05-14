@@ -359,6 +359,7 @@
       <DependentUpon>frmLogin.cs</DependentUpon>
     </Compile>
     <Compile Include="Herramientas\ConvertirBitMap.cs" />
+    <Compile Include="Herramientas\DetalleNegocio.cs" />
     <Compile Include="Herramientas\OpcionCombo.cs" />
     <Compile Include="Inicio.cs">
       <SubType>Form</SubType>
