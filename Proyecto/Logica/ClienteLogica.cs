@@ -213,7 +213,7 @@ namespace ProyectoVenta.Logica
                     respuesta = cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 respuesta = 0;

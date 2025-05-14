@@ -424,5 +424,10 @@ namespace Proyecto.Formularios.Ventas
                 calcularcambio();
             }
         }
+
+        private void txtpagocon_TextChanged(object sender, EventArgs e)
+        {
+            calcularcambio();
+        }
     }
 }

@@ -57,7 +57,7 @@ namespace ProyectoVenta.Logica
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 obj = new Datos();
             }
@@ -164,7 +164,7 @@ namespace ProyectoVenta.Logica
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 obtenido = false;
                 obj = new byte[0];

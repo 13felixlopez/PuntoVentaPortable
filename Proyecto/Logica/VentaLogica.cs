@@ -244,7 +244,7 @@ namespace ProyectoVenta.Logica
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 oLista = new List<VistaVenta>();
             }
@@ -291,7 +291,7 @@ namespace ProyectoVenta.Logica
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 objeto = null;
             }
@@ -335,7 +335,7 @@ namespace ProyectoVenta.Logica
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 oLista = new List<DetalleVenta>();
             }

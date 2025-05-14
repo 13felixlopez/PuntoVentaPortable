@@ -62,7 +62,7 @@ namespace ProyectoVenta.Logica
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 obj = new Permisos();
             }

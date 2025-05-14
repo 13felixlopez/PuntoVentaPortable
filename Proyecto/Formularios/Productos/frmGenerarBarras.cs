@@ -1,21 +1,23 @@
-﻿using BarcodeLib;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Proyecto.Formularios.Modales;
 using Proyecto.Herramientas;
 using Proyecto.Herrarmientas;
 using Proyecto.Modelo;
 using ProyectoVenta.Logica;
+using SkiaSharp;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ZXing;
+using ZXing.Common;
+using Rectangle = iTextSharp.text.Rectangle;
 
 namespace Proyecto.Formularios.Productos
 {
@@ -23,7 +25,9 @@ namespace Proyecto.Formularios.Productos
     {
         private static string rutaguardado = "";
         private static int valorCodigo = -1;
-        private static int verticalDocumento = -1;
+        private bool verticalDocumento;
+        private string rutaGuardar;
+
         public frmGenerarBarras()
         {
             InitializeComponent();
@@ -36,49 +40,26 @@ namespace Proyecto.Formularios.Productos
 
         private void frmGenerarBarras_Load(object sender, EventArgs e)
         {
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 1, Texto = "UPCA" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 2, Texto = "UPCE" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 3, Texto = "UPC_SUPPLEMENTAL_2DIGIT" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 4, Texto = "UPC_SUPPLEMENTAL_5DIGIT" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 5, Texto = "EAN13" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 6, Texto = "EAN8" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 7, Texto = "Interleaved2of5" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 8, Texto = "Standard2of5" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 9, Texto = "Industrial2of5" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 10, Texto = "CODE39" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 11, Texto = "CODE39Extended" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 12, Texto = "CODE39_Mod43" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 13, Texto = "Codabar" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 14, Texto = "PostNet" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 15, Texto = "BOOKLAND" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 16, Texto = "ISBN" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 17, Texto = "JAN13" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 18, Texto = "MSI_Mod10" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 19, Texto = "MSI_2Mod10" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 20, Texto = "MSI_Mod11" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 21, Texto = "MSI_Mod11_Mod10" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 22, Texto = "Modified_Plessey" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 23, Texto = "CODE11" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 24, Texto = "USD8" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 25, Texto = "UCC12" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 26, Texto = "UCC13" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 27, Texto = "LOGMARS" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 28, Texto = "CODE128" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 29, Texto = "CODE128A" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 30, Texto = "CODE128B" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 31, Texto = "CODE128C" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 32, Texto = "ITF14" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 33, Texto = "CODE93" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 34, Texto = "TELEPEN" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 35, Texto = "FIM" });
-            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = 36, Texto = "PHARMACODE" });
+            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.CODE_128, Texto = "CODE_128" });
+            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.CODE_39, Texto = "CODE_39" });
+            //cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.EAN_13, Texto = "EAN_13" });
+            //cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.EAN_8, Texto = "EAN_8" });
+            //cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.ITF, Texto = "ITF" });
+            //cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.UPC_A, Texto = "UPC_A" });
+            //cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.UPC_E, Texto = "UPC_E" });
+            //cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.CODABAR, Texto = "CODABAR" });
+            cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.QR_CODE, Texto = "QR_CODE" });
+            //cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.MSI, Texto = "MSI" });
+            //cbotipocodigo.Items.Add(new OpcionCombo() { Valor = BarcodeFormat.PLESSEY, Texto = "PLESSEY" });
+
 
             cbotipocodigo.DisplayMember = "Texto";
             cbotipocodigo.ValueMember = "Valor";
-            cbotipocodigo.SelectedIndex = 27;
+            cbotipocodigo.SelectedItem = 0;
 
-            cboorientacion.Items.Add(new OpcionCombo() { Valor = 0, Texto = "Vertical" });
-            cboorientacion.Items.Add(new OpcionCombo() { Valor = 1, Texto = "Horizontal" });
+            // Inicialización de combobox de orientación
+            cboorientacion.Items.Add(new OpcionCombo() { Valor = false, Texto = "Vertical" }); // false para vertical
+            cboorientacion.Items.Add(new OpcionCombo() { Valor = true, Texto = "Horizontal" }); // true para horizontal
             cboorientacion.DisplayMember = "Texto";
             cboorientacion.ValueMember = "Valor";
             cboorientacion.SelectedIndex = 0;
@@ -86,106 +67,348 @@ namespace Proyecto.Formularios.Productos
 
         private void btngenerarimagen_Click(object sender, EventArgs e)
         {
-
             if (txtcodigo.Text.Trim() != "")
             {
-
-                int valor = Convert.ToInt32(((OpcionCombo)cbotipocodigo.SelectedItem).Valor.ToString());
-
-
                 SaveFileDialog savefile = new SaveFileDialog();
-                savefile.FileName = string.Format("{0}.png", txtcodigo.Text.Trim());
+                savefile.FileName = $"{txtcodigo.Text.Trim()}.png";
                 savefile.Filter = "Files|*.png";
+
                 if (savefile.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        using (BarcodeLib.Barcode etiqueta = new BarcodeLib.Barcode())
+                        // Crear código de barras
+                        BarcodeWriter writer = new BarcodeWriter
                         {
-                            etiqueta.IncludeLabel = chkmostrarcodigo.Checked;
-                            etiqueta.AlternateLabel = txtcodigo.Text.Trim();
-                            etiqueta.LabelPosition = LabelPositions.BOTTOMCENTER;
-                            etiqueta.LabelFont = new System.Drawing.Font(FontFamily.GenericMonospace, 15, FontStyle.Regular);
-                            var etiquetaImagen = etiqueta.Encode(((BarcodeLib.TYPE)valor), txtcodigo.Text.Trim(), Color.Black, Color.White, 400, 100);
+                            Format = (BarcodeFormat)((OpcionCombo)cbotipocodigo.SelectedItem).Valor,
+                            Options = new EncodingOptions
+                            {
+                                Width = 400,
+                                Height = 100,
+                                Margin = 1
+                            }
+                        };
 
+                        Bitmap barcodeBitmap = writer.Write(txtcodigo.Text.Trim());
 
-                            Bitmap titulo = ConvertirBitMap.convertirTextoImagen(txtdescripcion.Text.Trim());
-                            int width = Math.Max((chkmostrardescripcion.Checked ? titulo.Width : 0), etiquetaImagen.Width);
-                            int height = (chkmostrardescripcion.Checked ? titulo.Height : 0) + etiquetaImagen.Height;
+                        // Si hay descripción, combinarla con el código
+                        Bitmap finalImage;
+                        if (chkmostrardescripcion.Checked)
+                        {
+                            Bitmap descripcion = ConvertirBitMap.convertirTextoImagen(txtdescripcion.Text.Trim());
+                            int width = Math.Max(barcodeBitmap.Width, descripcion.Width);
+                            int height = barcodeBitmap.Height + descripcion.Height;
 
-                            Bitmap img3 = new Bitmap(width, height);
-                            Graphics g = Graphics.FromImage(img3);
-                            if (chkmostrardescripcion.Checked)
-                                g.DrawImage(titulo, new Point(0, 0));
+                            finalImage = new Bitmap(width, height);
+                            using (Graphics g = Graphics.FromImage(finalImage))
+                            {
+                                g.Clear(Color.White);
+                                g.DrawImage(descripcion, new Point(0, 0));
+                                g.DrawImage(barcodeBitmap, new Point(0, descripcion.Height));
+                            }
 
-                            g.DrawImage(etiquetaImagen, new Point(0, (chkmostrardescripcion.Checked ? titulo.Height : 0)));
-
-                            img3.Save(savefile.FileName, System.Drawing.Imaging.ImageFormat.Png);
-                            img3.Dispose();
-
-                            g.Dispose();
-                            titulo.Dispose();
-                            etiquetaImagen.Dispose();
-                            etiqueta.Dispose();
-
-                            MessageBox.Show("Etiqueta Generada!", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            descripcion.Dispose();
                         }
+                        else
+                        {
+                            finalImage = new Bitmap(barcodeBitmap);
+                        }
+
+                        finalImage.Save(savefile.FileName, System.Drawing.Imaging.ImageFormat.Png);
+
+                        barcodeBitmap.Dispose();
+                        finalImage.Dispose();
+
+                        MessageBox.Show("Etiqueta generada!", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
-                    catch (Exception err)
+                    catch (Exception ex)
                     {
-                        MessageBox.Show("Ocurrió un problema\nMayor Detalle:\n" + err.Message + "\n\n*Si muestra en ingles, proceda a traducirlo", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show("Error: " + ex.Message, "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
-
                 }
             }
-
         }
+
 
         private void btngenerardocumento_Click(object sender, EventArgs e)
         {
-
-            if (txtcodigo.Text.Trim() != "")
+            if (txtcodigo.Text.Trim() == "")
             {
-                bool error = false;
-                progressBar1.Maximum = Convert.ToInt32(txtnumeroetiquetas.Value.ToString());
-                progressBar1.Step = 1;
+                MessageBox.Show("Ingrese un código", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!(cbotipocodigo.SelectedItem is OpcionCombo opcionCodigo) ||
+                !(cboorientacion.SelectedItem is OpcionCombo opcionOrientacion))
+            {
+                MessageBox.Show("Seleccione tipo de código y orientación", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            valorCodigo = (int)opcionCodigo.Valor;
+            verticalDocumento = (bool)opcionOrientacion.Valor; // Ahora es bool
+
+            SaveFileDialog savefile = new SaveFileDialog
+            {
+                FileName = $"{txtcodigo.Text.Trim()}.pdf",
+                Filter = "Pdf Files|*.pdf"
+            };
+
+            if (savefile.ShowDialog() == DialogResult.OK)
+            {
+                rutaguardado = savefile.FileName;
+                progressBar1.Maximum = (int)txtnumeroetiquetas.Value;
                 progressBar1.Value = 0;
-                valorCodigo = Convert.ToInt32(((OpcionCombo)cbotipocodigo.SelectedItem).Valor.ToString());
-                verticalDocumento = Convert.ToInt32(((OpcionCombo)cboorientacion.SelectedItem).Valor.ToString());
-                CheckForIllegalCrossThreadCalls = false;
+                // Establecer el máximo ANTES de iniciar el backgroundWorker
+                progressBar1.Maximum = (int)txtnumeroetiquetas.Value;
+                progressBar1.Value = 0; // Reiniciar a 0
+                backgroundWorker1.RunWorkerAsync();
+            }
+        }
 
-                try
+        private async Task GenerarDocumentoPDF(string codigo, string descripcion, bool mostrarDescripcion,
+            BarcodeFormat tipoCodigo, bool esHorizontal, int numeroEtiquetas, string rutaDestino)
+        {
+            try
+            {
+                // Configuración del writer
+                var writer = new BarcodeWriter
                 {
-                    BarcodeLib.Barcode etiqueta = new BarcodeLib.Barcode();
-                    var etiquetaImagen = etiqueta.Encode(((BarcodeLib.TYPE)valorCodigo), txtcodigo.Text.Trim(), Color.Black, Color.White, 400, 100);
-                }
-                catch (Exception err)
-                {
-                    error = true;
-                    MessageBox.Show("Ocurrió un problema\nMayor Detalle:\n" + err.Message + "\n\n*Si muestra en ingles, proceda a traducirlo", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
-
-                if (!error)
-                {
-                    SaveFileDialog savefile = new SaveFileDialog();
-                    savefile.FileName = string.Format("{0}.pdf", txtcodigo.Text.Trim());
-                    savefile.Filter = "Pdf Files|*.pdf";
-
-                    if (savefile.ShowDialog() == DialogResult.OK)
+                    Format = tipoCodigo,
+                    Options = new EncodingOptions
                     {
-                        rutaguardado = savefile.FileName;
-                        backgroundWorker1.RunWorkerAsync();
+                        Width = 400,
+                        Height = 100,
+                        Margin = 1
                     }
+                };
+
+                using (var stream = new FileStream(rutaDestino, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    var pageSize = esHorizontal ? PageSize.A4.Rotate() : PageSize.A4;
+                    var doc = new Document(pageSize);
+                    var pdfWriter = PdfWriter.GetInstance(doc, stream);
+                    doc.Open();
+
+                    for (int i = 1; i <= numeroEtiquetas; i++)
+                    {
+                        // Generar código de barras
+                        using (var barcodeBitmap = writer.Write(codigo))
+                        {
+                            // Combinar con descripción si aplica
+                            using (var finalImage = mostrarDescripcion ?
+                                CombinarConDescripcion(barcodeBitmap, descripcion) :
+                                new Bitmap(barcodeBitmap))
+                            {
+                                // Agregar al PDF
+                                var img = iTextSharp.text.Image.GetInstance(finalImage, ImageFormat.Png);
+                                img.Alignment = Element.ALIGN_CENTER;
+                                doc.Add(img);
+
+                                // Agregar nueva página si no es la última etiqueta
+                                if (i < numeroEtiquetas)
+                                {
+                                    doc.NewPage();
+                                }
+                            }
+                        }
+
+                        // Actualizar progreso en el hilo UI
+                        this.Invoke((Action)(() => progressBar1.Value = i));
+                    }
+
+                    doc.Close();
                 }
 
+                this.Invoke((Action)(() =>
+                    MessageBox.Show("Documento generado correctamente.", "Mensaje",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information)));
+            }
+            catch (Exception ex)
+            {
+                this.Invoke((Action)(() =>
+                    MessageBox.Show($"Error al generar el documento:\n{ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error)));
+            }
+        }
 
+        private Bitmap CombinarConDescripcion(Bitmap barcodeBitmap, string descripcion)
+        {
+            Bitmap descripcionBitmap = ConvertirBitMap.convertirTextoImagen(descripcion.Trim());
+            try
+            {
+                int width = Math.Max(barcodeBitmap.Width, descripcionBitmap.Width);
+                int height = barcodeBitmap.Height + descripcionBitmap.Height;
+
+                var finalImage = new Bitmap(width, height);
+                using (Graphics g = Graphics.FromImage(finalImage))
+                {
+                    g.Clear(Color.White);
+                    g.DrawImage(descripcionBitmap, new Point(0, 0));
+                    g.DrawImage(barcodeBitmap, new Point(0, descripcionBitmap.Height));
+                }
+
+                return finalImage;
+            }
+            finally
+            {
+                descripcionBitmap.Dispose();
+            }
+        }
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                var tipoCodigo = (BarcodeFormat)valorCodigo;
+                var writer = new BarcodeWriter
+                {
+                    Format = tipoCodigo,
+                    Options = new EncodingOptions { Width = 400, Height = 100, Margin = 1 }
+                };
+
+                // Configuración de tamaños
+                int widthImage = verticalDocumento ? 230 : 170;
+                int heightImage = verticalDocumento ? 110 : 80;
+                float sizeFont = 8; // Tamaño de fuente pequeño
+                float qrCodeSizeMultiplier = 1.5f; // Aumentar tamaño para QR
+
+                using (var stream = new FileStream(rutaguardado, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    // Configuración del documento
+                    iTextSharp.text.Rectangle orientacionDocumento = verticalDocumento ? PageSize.A4.Rotate() : PageSize.A4;
+                    Document pdfDoc = new Document(orientacionDocumento, 15, 15, 15, 15);
+                    PdfWriter.GetInstance(pdfDoc, stream);
+                    pdfDoc.Open();
+
+                    // Configuración de la tabla principal con bordes visibles
+                    PdfPTable table = new PdfPTable(3);
+                    table.WidthPercentage = 100;
+                    table.DefaultCell.Border = Rectangle.BOX;
+                    table.DefaultCell.BorderWidth = 0.5f;
+                    table.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    table.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    table.DefaultCell.Padding = 5;
+
+                    int numeroEtiquetas = (int)txtnumeroetiquetas.Value;
+                    int numeroEtiquetasOrigen = numeroEtiquetas;
+                    numeroEtiquetas = (numeroEtiquetas % 3) > 0 ? (3 * totalFilas()) : numeroEtiquetas;
+
+                    for (int i = 1; i <= numeroEtiquetas; i++)
+                    {
+                        PdfPCell celda = new PdfPCell();
+                        celda.Border = Rectangle.BOX;
+                        celda.BorderWidth = 0.5f;
+                        celda.HorizontalAlignment = Element.ALIGN_CENTER;
+                        celda.VerticalAlignment = Element.ALIGN_MIDDLE;
+                        celda.Padding = 5;
+
+                        if (i > numeroEtiquetasOrigen)
+                        {
+                            celda.AddElement(new Paragraph(""));
+                        }
+                        else
+                        {
+                            using (var barcodeBitmap = writer.Write(txtcodigo.Text.Trim()))
+                            {
+                                PdfPTable innerTable = new PdfPTable(1);
+                                innerTable.WidthPercentage = 100;
+                                innerTable.DefaultCell.Border = Rectangle.NO_BORDER;
+                                innerTable.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
+
+                                // Descripción (si está marcado)
+                                if (chkmostrardescripcion.Checked)
+                                {
+                                    Paragraph descripcion = new Paragraph(txtdescripcion.Text.Trim());
+                                    descripcion.Font = FontFactory.GetFont(FontFactory.HELVETICA, sizeFont);
+                                    descripcion.Alignment = Element.ALIGN_CENTER;
+                                    innerTable.AddCell(descripcion);
+                                }
+
+                                // Ajustar tamaño para QR Code
+                                float scaleWidth = widthImage;
+                                float scaleHeight = heightImage;
+
+                                if (tipoCodigo == BarcodeFormat.QR_CODE)
+                                {
+                                    scaleWidth *= qrCodeSizeMultiplier;
+                                    scaleHeight *= qrCodeSizeMultiplier;
+                                }
+
+                                // Imagen del código
+                                using (var ms = new MemoryStream())
+                                {
+                                    barcodeBitmap.Save(ms, ImageFormat.Png);
+                                    var img = iTextSharp.text.Image.GetInstance(ms.ToArray());
+                                    img.ScaleToFit(scaleWidth, scaleHeight);
+                                    img.Alignment = iTextSharp.text.Image.ALIGN_CENTER;
+                                    innerTable.AddCell(img);
+                                }
+
+                                // Código de producto (si está marcado y no es QR)
+                                if (chkmostrarcodigo.Checked)
+                                {
+                                    Paragraph codigo = new Paragraph(txtcodigo.Text.Trim());
+                                    codigo.Font = FontFactory.GetFont(FontFactory.HELVETICA, sizeFont);
+                                    codigo.Alignment = Element.ALIGN_CENTER;
+
+                                    // Solo agregar si no es QR o si es QR y queremos mostrarlo igual
+                                    if (tipoCodigo != BarcodeFormat.QR_CODE)
+                                    {
+                                        innerTable.AddCell(codigo);
+                                    }
+                                    else
+                                    {
+                                        // Para QR, agregar el código como texto debajo
+                                        innerTable.AddCell(codigo);
+                                    }
+                                }
+
+                                celda.AddElement(innerTable);
+                            }
+                        }
+
+                        table.AddCell(celda);
+                        backgroundWorker1.ReportProgress(i);
+                    }
+
+                    pdfDoc.Add(table);
+                    pdfDoc.Close();
+                }
+
+                this.Invoke((MethodInvoker)delegate {
+                    var result = MessageBox.Show("Documento generado correctamente. ¿Desea abrir el documento ahora?",
+                                              "Éxito", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        try
+                        {
+                            System.Diagnostics.Process.Start(rutaguardado);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"No se pudo abrir el documento: {ex.Message}",
+                                          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+
+                    progressBar1.Value = 0;
+                    rutaguardado = "";
+                    valorCodigo = -1;
+                    verticalDocumento = false;
+                });
+            }
+            catch (Exception ex)
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    MessageBox.Show($"Error al generar el documento: {ex.Message}",
+                                  "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
             }
         }
         private int totalFilas()
         {
-
-            int numeroEtiquetas = Convert.ToInt32(txtnumeroetiquetas.Value.ToString());
+            int numeroEtiquetas = (int)txtnumeroetiquetas.Value;
             int numeroColumna = 1;
             int numeroFila = 1;
 
@@ -204,95 +427,62 @@ namespace Proyecto.Formularios.Productos
 
             return numeroFila;
         }
-
-
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void CrearDocumentoPDFConImagen(Bitmap imagen, string rutaDestino, bool esHorizontal)
         {
-            using (FileStream stream = new FileStream(rutaguardado, FileMode.Create))
+            using (var stream = new FileStream(rutaDestino, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                int valor = valorCodigo;
-                int vertical = verticalDocumento;
-                int widthImage = vertical == 0 ? 170 : 230;
-                int HeightImage = vertical == 0 ? 80 : 110;
-                string descripcionProducto = chkmostrardescripcion.Checked ? txtdescripcion.Text.Trim() : "";
-                int descripcionSpacingAfter = chkmostrardescripcion.Checked ? 5 : 8;
-                BaseColor descripcionBaseColor = chkmostrardescripcion.Checked ? BaseColor.BLACK : BaseColor.WHITE;
-                iTextSharp.text.Rectangle orientacionDocumento = vertical == 0 ? PageSize.A4 : PageSize.A4.Rotate();
-                float sizeFont = vertical == 0 ? 16 : 14;
+                var pageSize = esHorizontal ? PageSize.A4.Rotate() : PageSize.A4;
+                var doc = new Document(pageSize);
+                var writer = PdfWriter.GetInstance(doc, stream);
+                doc.Open();
 
-                //CONFIGURACION DE ETIQUETA
-                BarcodeLib.Barcode etiqueta = new BarcodeLib.Barcode();
-                etiqueta.IncludeLabel = chkmostrarcodigo.Checked;
-                etiqueta.AlternateLabel = txtcodigo.Text.Trim();
-                etiqueta.LabelPosition = LabelPositions.BOTTOMCENTER;
-                etiqueta.LabelFont = new System.Drawing.Font(FontFamily.GenericMonospace, sizeFont, FontStyle.Regular);
-                etiqueta.ImageFormat = System.Drawing.Imaging.ImageFormat.Png;
-                var etiquetaImagen = etiqueta.Encode(((BarcodeLib.TYPE)valor), txtcodigo.Text.Trim(), Color.Black, Color.White, 400, 100);
+                var img = iTextSharp.text.Image.GetInstance(imagen, ImageFormat.Png);
+                img.Alignment = Element.ALIGN_CENTER;
+                doc.Add(img);
 
-                //CONFIGURACION DE DOCUMENTO
-                Document pdfDoc = new Document(orientacionDocumento, 15, 15, 15, 15);
+                doc.Close();
+            }
+        }
 
-                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
-                pdfDoc.Open();
-
-                PdfPTable table = new PdfPTable(3);
-                table.WidthPercentage = 100;
-
-                int numeroEtiquetas = Convert.ToInt32(txtnumeroetiquetas.Value.ToString());
-                int numeroEtiquetasOrigen = numeroEtiquetas;
-                numeroEtiquetas = (numeroEtiquetas % 3) > 0 ? (3 * totalFilas()) : numeroEtiquetas;
-
-
-                for (int i = 1; i <= numeroEtiquetas; i++)
+        private void AgregarImagenAPDF(Bitmap imagen, string rutaPdf, bool esHorizontal)
+        {
+            using (var fs = new FileStream(rutaPdf, FileMode.Open, FileAccess.ReadWrite))
+            using (var reader = new PdfReader(fs))
+            using (var ms = new MemoryStream())
+            {
+                using (var stamper = new PdfStamper(reader, ms))
                 {
-                    PdfPCell celda = new PdfPCell();
+                    var pageSize = esHorizontal ? PageSize.A4.Rotate() : PageSize.A4;
+                    stamper.InsertPage(reader.NumberOfPages + 1, pageSize);
 
-                    if (i > numeroEtiquetasOrigen)
+                    var cb = stamper.GetOverContent(reader.NumberOfPages);
+                    using (var msImage = new MemoryStream())
                     {
-                        celda.AddElement(new Paragraph(""));
+                        imagen.Save(msImage, ImageFormat.Png);
+                        var img = iTextSharp.text.Image.GetInstance(msImage.ToArray());
+                        img.ScaleToFit(pageSize.Width - 40, pageSize.Height - 40);
+                        img.SetAbsolutePosition(
+                            (pageSize.Width - img.ScaledWidth) / 2,
+                            (pageSize.Height - img.ScaledHeight) / 2);
+                        cb.AddImage(img);
                     }
-                    else
-                    {
-                        Paragraph para = new Paragraph();
-                        para.Alignment = Element.ALIGN_CENTER;
-                        para.Font = FontFactory.GetFont("Webdings", 10, iTextSharp.text.Font.NORMAL, descripcionBaseColor);
-                        para.Add(descripcionProducto);
-                        para.SpacingAfter = descripcionSpacingAfter;
-                        celda.AddElement(para);
-
-
-                        iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(etiquetaImagen, System.Drawing.Imaging.ImageFormat.Png);
-                        img.ScaleToFit(widthImage, HeightImage);
-                        img.Alignment = iTextSharp.text.Image.ALIGN_CENTER;
-                        if (!chkmostrarcodigo.Checked)
-                            img.SpacingAfter = 7;
-
-                        celda.AddElement(img);
-                        celda.HorizontalAlignment = Element.ALIGN_CENTER;
-
-                        backgroundWorker1.ReportProgress(i);
-                    }
-
-                    table.AddCell(celda);
                 }
-
-                pdfDoc.Add(table);
-
-                pdfDoc.Close();
-                stream.Close();
-                MessageBox.Show("Documento Generado", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                progressBar1.Value = 0;
-                rutaguardado = "";
-                valorCodigo = -1;
-                verticalDocumento = -1;
-
+                File.WriteAllBytes(rutaPdf, ms.ToArray());
             }
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBar1.Value = e.ProgressPercentage;
+            // Asegurarse que el valor esté dentro del rango permitido
+            if (e.ProgressPercentage >= progressBar1.Minimum && e.ProgressPercentage <= progressBar1.Maximum)
+            {
+                progressBar1.Value = e.ProgressPercentage;
+            }
+            else
+            {
+                // Si excede el máximo, establecerlo al máximo permitido
+                progressBar1.Value = progressBar1.Maximum;
+            }
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
